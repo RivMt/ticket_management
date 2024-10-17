@@ -73,6 +73,7 @@ class _TicketEditDialogState extends State<TicketEditDialog> {
     editing = Ticket.fromMap(widget.ticket?.map ?? {});
     editing.scheduleUid = widget.schedule.uid;
     seatsController.text = editing.seats.toString();
+    nameController.text = editing.name;
   }
 
   @override

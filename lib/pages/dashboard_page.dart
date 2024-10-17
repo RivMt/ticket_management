@@ -68,39 +68,31 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     }
   }
 
-  void onSchedulePressed(Schedule schedule) async {
-    // TODO: Calculate max seats
-    final result = await showTicketEditDialog(schedule, schedule.seats);
+  void onSchedulePressed(Schedule schedule, int left) async {
+    final result = await showTicketEditDialog(schedule, left);
     if (result == null) return;
     // Issue ticket
-    ref.watch(provider.tickets.notifier).set(
-        ref.watch(provider.section),
-        ref.watch(provider.namespace),
-        result
-    );
+    provider.setTicket(ref, result);
   }
 
   void onScheduleLongPressed(Schedule schedule) async {
     final result = await showScheduleEditDialog(schedule);
     if (result == null) {
       // Remove
-      ref.watch(provider.schedules.notifier).delete(
-          ref.watch(provider.section),
-          ref.watch(provider.namespace),
-          schedule.uid
-      );
+      provider.deleteSchedule(ref, schedule.uid);
       return;
     }
     // Edit
-    ref.watch(provider.schedules.notifier).update(
-        ref.watch(provider.section),
-        ref.watch(provider.namespace),
-        schedule
-    );
+    provider.updateSchedule(ref, schedule);
   }
 
-  void onTicketPressed(Ticket ticket) {
-
+  void onTicketPressed(Ticket ticket) async {
+    final schedule = provider.getSchedule(ref, ticket.scheduleUid);
+    final left = provider.getLeftSeats(ref, schedule.uid);
+    final result = await showTicketEditDialog(schedule, left + ticket.seats, ticket);
+    if (result == null) return;
+    // Issue ticket
+    provider.updateTicket(ref, result);
   }
 
   /// On tab page changed
@@ -120,11 +112,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
         return;
       }
       // Create
-      ref.watch(provider.schedules.notifier).set(
-          ref.watch(provider.section),
-          ref.watch(provider.namespace),
-          result
-      );
+      provider.setSchedule(ref, result);
     } else {
     }
   }

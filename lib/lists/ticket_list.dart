@@ -5,7 +5,7 @@ import 'package:ticket_management/provider.dart' as provider;
 import 'package:ticket_management/cards/ticket_card.dart';
 
 final _tickets = Provider<List<Ticket>>((ref) {
-  final data = ref.watch(provider.tickets);
+  final data = ref.watch(provider.ticketsRaw);
   data.sort((a, b) {
     return a.issued.compareTo(b.issued) * -1;
   });

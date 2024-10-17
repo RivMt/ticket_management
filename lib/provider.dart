@@ -10,13 +10,20 @@ import 'package:ticket_management/models/user.dart';
 void refresh(WidgetRef ref) {
   final sec = ref.watch(section);
   final nsp = ref.watch(namespace);
-  ref.watch(tickets.notifier).get(sec, nsp);
-  ref.watch(schedules.notifier).get(sec, nsp);
+  ref.watch(ticketsRaw.notifier).get(sec, nsp);
+  ref.watch(schedulesRaw.notifier).get(sec, nsp);
 }
 
 void clear(WidgetRef ref) {
-  ref.watch(tickets.notifier).clear();
-  ref.watch(schedules.notifier).clear();
+  ref.watch(ticketsRaw.notifier).clear();
+  ref.watch(schedulesRaw.notifier).clear();
+}
+
+int getLeftSeats(WidgetRef ref, String uid) {
+  final schedule = getSchedule(ref, uid);
+  final tks = ref.watch(tickets);
+  final reserved = tks[uid]!.fold<int>(0, (prev, t) => prev + t.seats);
+  return schedule.seats - reserved;
 }
 
 final section = StateNotifierProvider<ObjectState<String>, String>((ref) {
@@ -30,13 +37,87 @@ final namespace = StateNotifierProvider<ObjectState<String>, String>((ref) {
   );
 });
 
-final tickets = StateNotifierProvider<ModelsState<Ticket>, List<Ticket>>((ref) {
+final ticketsRaw = StateNotifierProvider<ModelsState<Ticket>, List<Ticket>>((ref) {
   return ModelsState<Ticket>(ref, (map) => Ticket.fromMap(map));
 });
 
-final schedules = StateNotifierProvider<ModelsState<Schedule>, List<Schedule>>((ref) {
+final tickets = Provider<Map<String, List<Ticket>>>((ref) {
+  final Map<String, List<Ticket>> map = {};
+  final scs = ref.watch(schedules);
+  for(Schedule s in scs) {
+    map[s.uid] = <Ticket>[];
+  }
+  final tks = ref.watch(ticketsRaw);
+  for(Ticket item in tks) {
+    map[item.scheduleUid]!.add(item);
+  }
+  return map;
+});
+
+void setTicket(WidgetRef ref, Ticket ticket) {
+  ref.watch(ticketsRaw.notifier).set(
+      ref.watch(section),
+      ref.watch(namespace),
+      ticket
+  );
+}
+
+void updateTicket(WidgetRef ref, Ticket ticket) {
+  ref.watch(ticketsRaw.notifier).update(
+      ref.watch(section),
+      ref.watch(namespace),
+      ticket
+  );
+}
+
+void deleteTicket(WidgetRef ref, String uid) {
+  ref.watch(ticketsRaw.notifier).delete(
+      ref.watch(section),
+      ref.watch(namespace),
+      uid,
+  );
+}
+
+final schedulesRaw = StateNotifierProvider<ModelsState<Schedule>, List<Schedule>>((ref) {
   return ModelsState<Schedule>(ref, (map) => Schedule.fromMap(map));
 });
+
+final schedules = Provider<List<Schedule>>((ref) {
+  final data = ref.watch(schedulesRaw);
+  data.sort((a, b) {
+    return a.datetime.compareTo(b.datetime);
+  });
+  return data;
+});
+
+Schedule getSchedule(WidgetRef ref, String uid) {
+  final scs = ref.watch(schedules);
+  return scs.firstWhere((item) => item.uid == uid);
+}
+
+void setSchedule(WidgetRef ref, Schedule schedule) {
+  ref.watch(schedulesRaw.notifier).set(
+      ref.watch(section),
+      ref.watch(namespace),
+      schedule
+  );
+}
+
+void updateSchedule(WidgetRef ref, Schedule schedule) {
+  ref.watch(schedulesRaw.notifier).update(
+      ref.watch(section),
+      ref.watch(namespace),
+      schedule
+  );
+}
+
+void deleteSchedule(WidgetRef ref, String uid) {
+  ref.watch(schedulesRaw.notifier).delete(
+    ref.watch(section),
+    ref.watch(namespace),
+    uid,
+  );
+}
 
 final user = StateNotifierProvider<ModelState<User>, User>((ref) {
   return ModelState<User>(ref, User.anonymous(), (map) => User.fromMap(map));
