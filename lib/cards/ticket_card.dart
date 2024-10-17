@@ -12,11 +12,14 @@ class TicketCard extends ConsumerWidget {
     super.key,
     required this.ticket,
     this.onTap,
+    this.onLongPress,
   });
 
   final Ticket ticket;
 
   final Function()? onTap;
+
+  final Function()? onLongPress;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,6 +68,7 @@ class TicketCard extends ConsumerWidget {
             ),
           ),
           onTap: onTap,
+          onLongPress: onLongPress,
         ),
       ),
     );

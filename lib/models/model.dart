@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ticket_management/models/printer_preferences.dart';
 import 'package:ticket_management/models/schedule.dart';
 import 'package:ticket_management/models/ticket.dart';
 import 'package:ticket_management/models/user.dart';
@@ -17,6 +18,8 @@ class Model {
       return "schedules";
     } else if (T == User) {
       return "users";
+    } else if (T == PrinterPreferences) {
+      return "printers";
     }
     throw UnimplementedError();
   }

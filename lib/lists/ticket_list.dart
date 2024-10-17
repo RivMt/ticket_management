@@ -16,9 +16,12 @@ class TicketList extends ConsumerStatefulWidget {
   const TicketList({
     super.key,
     this.onItemTap,
+    this.onItemLongPress,
   });
 
   final Function(Ticket)? onItemTap;
+
+  final Function(Ticket)? onItemLongPress;
 
   @override
   ConsumerState createState() => _TicketListState();
@@ -36,10 +39,14 @@ class _TicketListState extends ConsumerState<TicketList> {
       itemCount: tickets.length,
       itemBuilder: (context, index) {
         final item = tickets[index];
+        final disabled = widget.onItemTap == null || item.canceled;
         return TicketCard(
           ticket: item,
-          onTap: (widget.onItemTap == null || item.canceled) ? null : () {
+          onTap: (disabled) ? null : () {
             widget.onItemTap!(item);
+          },
+          onLongPress: (disabled) ? null : () {
+            widget.onItemLongPress!(item);
           },
         );
       },

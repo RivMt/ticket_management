@@ -38,7 +38,8 @@
     "name": "Name",
     "seats": "@:schedule.seats",
     "issued": "Issued at",
-    "canceled": "Canceled"
+    "canceled": "Canceled",
+    "msgNoTicketPreview": "Unable to display ticket preview"
   },
   "auth": {
     "section": "Section",
@@ -47,5 +48,16 @@
     "msgFailed": "Failed to enter system",
     "msgSuccess": "Entering successful",
     "msgUseManager": "Enable management mode"
+  },
+  "printer": {
+    "title": "Printer settings",
+    "hint": {
+      "host": "Host",
+      "width": "Width",
+      "height": "Height",
+      "dpi": "DPI",
+      "title": "Title",
+      "subtitle": "Subtitle"
+    }
   }
 }

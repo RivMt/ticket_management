@@ -8,6 +8,8 @@ import 'package:ticket_management/lists/schedule_list.dart';
 import 'package:ticket_management/lists/ticket_list.dart';
 import 'package:ticket_management/models/schedule.dart';
 import 'package:ticket_management/models/ticket.dart';
+import 'package:ticket_management/pages/printer_page.dart';
+import 'package:ticket_management/pages/ticket_page.dart';
 import 'package:ticket_management/provider.dart' as provider;
 
 class DashboardPage extends ConsumerStatefulWidget {
@@ -57,6 +59,12 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     );
   }
 
+  void onPrinterPressed() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return const PrinterPage();
+    }));
+  }
+
   void onActionPressed() async {
     final user = ref.watch(provider.user);
     if (user.isEditor) {
@@ -93,6 +101,14 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     if (result == null) return;
     // Update ticket
     provider.updateTicket(ref, result);
+  }
+
+  void onTicketLongPressed(Ticket ticket) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return TicketPage(
+        uid: ticket.uid,
+      );
+    }));
   }
 
   /// On tab page changed
@@ -134,6 +150,11 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
       appBar: AppBar(
         title: Text(LocaleKeys.dashboard_title.tr()),
         actions: [
+          if (user.isEditor)
+            IconButton(
+              icon: const Icon(Icons.print_outlined),
+              onPressed: onPrinterPressed,
+            ),
           IconButton(
             icon: user.isEditor
                 ? const Icon(Icons.verified_sharp)
@@ -166,6 +187,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
               // 1: Tickets
               TicketList(
                 onItemTap: onTicketPressed,
+                onItemLongPress: onTicketLongPressed,
               ),
             ],
           ),

@@ -2,16 +2,20 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ticket_management/firebase.dart';
+import 'package:ticket_management/models/printer_preferences.dart';
 import 'package:ticket_management/models/schedule.dart';
 import 'package:ticket_management/models/ticket.dart';
 import 'package:ticket_management/models/state.dart';
 import 'package:ticket_management/models/user.dart';
+import 'package:ticket_management/printer.dart';
 
 void refresh(WidgetRef ref) {
   final sec = ref.watch(section);
   final nsp = ref.watch(namespace);
   ref.watch(ticketsRaw.notifier).get(sec, nsp);
   ref.watch(schedulesRaw.notifier).get(sec, nsp);
+  ref.watch(printer.notifier).get(sec, nsp, PrinterPreferences.baseUid);
+  Printer().set(ref.watch(printer));
 }
 
 void clear(WidgetRef ref) {
@@ -150,4 +154,17 @@ Future<void> signOut(WidgetRef ref) async  {
 void signAnonymous(WidgetRef ref) {
   final User data = User.anonymous();
   ref.watch(user.notifier).inject(data);
+}
+
+final printer = StateNotifierProvider<ModelState<PrinterPreferences>, PrinterPreferences>((ref) {
+  return ModelState<PrinterPreferences>(ref, PrinterPreferences.simple(), (map) => PrinterPreferences.fromMap(map));
+});
+
+void setPrinter(WidgetRef ref, PrinterPreferences pref) {
+  ref.watch(printer.notifier).set(
+    FirebaseHelper.sectionGlobal,
+    FirebaseHelper.namespaceIam,
+    pref,
+  );
+  Printer().set(pref);
 }
