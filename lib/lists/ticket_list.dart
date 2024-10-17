@@ -38,7 +38,7 @@ class _TicketListState extends ConsumerState<TicketList> {
         final item = tickets[index];
         return TicketCard(
           ticket: item,
-          onTap: widget.onItemTap == null ? null : () {
+          onTap: (widget.onItemTap == null || item.canceled) ? null : () {
             widget.onItemTap!(item);
           },
         );

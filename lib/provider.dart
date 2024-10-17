@@ -22,7 +22,9 @@ void clear(WidgetRef ref) {
 int getLeftSeats(WidgetRef ref, String uid) {
   final schedule = getSchedule(ref, uid);
   final tks = ref.watch(tickets);
-  final reserved = tks[uid]!.fold<int>(0, (prev, t) => prev + t.seats);
+  final reserved = tks[uid]!.fold<int>(0, (prev, t) {
+    return prev + t.seats * (t.canceled ? 0 : 1);
+  });
   return schedule.seats - reserved;
 }
 
@@ -55,6 +57,7 @@ final tickets = Provider<Map<String, List<Ticket>>>((ref) {
 });
 
 void setTicket(WidgetRef ref, Ticket ticket) {
+  // TODO: Verify left seats
   ref.watch(ticketsRaw.notifier).set(
       ref.watch(section),
       ref.watch(namespace),
@@ -63,6 +66,7 @@ void setTicket(WidgetRef ref, Ticket ticket) {
 }
 
 void updateTicket(WidgetRef ref, Ticket ticket) {
+  // TODO: Verify left seats
   ref.watch(ticketsRaw.notifier).update(
       ref.watch(section),
       ref.watch(namespace),

@@ -34,14 +34,35 @@ class TicketCard extends ConsumerWidget {
           ),
           title: Text(DateFormat(LocaleKeys.format_MMMMd.tr()).format(schedule.datetime)),
           subtitle: Text(LocaleKeys.format_name.tr(args: [ticket.name])),
-          trailing: Wrap(
-            children: [
-              Text(
-                ticket.seats.toString(),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              Text(LocaleKeys.format_seatUnit.tr(),),
-            ],
+          trailing: SizedBox(
+            width: 64,
+            child: IndexedStack(
+              index: ticket.canceled ? 1 : 0,
+              children: [
+                // 0: Valid
+                Wrap(
+                  children: [
+                    Text(
+                      ticket.seats.toString(),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(LocaleKeys.format_seatUnit.tr(),),
+                  ],
+                ),
+                // 1: Canceled
+                Column(
+                  children: [
+                    const Icon(Icons.cancel_outlined, color: Colors.red,),
+                    Text(
+                      LocaleKeys.ticket_canceled.tr(),
+                      style: const TextStyle(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           onTap: onTap,
         ),

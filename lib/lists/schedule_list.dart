@@ -35,7 +35,7 @@ class _ScheduleListState extends ConsumerState<ScheduleList> {
           datetime: item.datetime,
           maxSeats: item.seats,
           leftSeats: left,
-          onTap: widget.onItemTap == null ? null : () {
+          onTap: (widget.onItemTap == null || left <= 0) ? null : () {
             widget.onItemTap!(item, left);
           },
         );

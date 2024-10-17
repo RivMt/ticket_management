@@ -91,7 +91,7 @@ class _DashboardPageState extends ConsumerState<DashboardPage> with TickerProvid
     final left = provider.getLeftSeats(ref, schedule.uid);
     final result = await showTicketEditDialog(schedule, left + ticket.seats, ticket);
     if (result == null) return;
-    // Issue ticket
+    // Update ticket
     provider.updateTicket(ref, result);
   }
 

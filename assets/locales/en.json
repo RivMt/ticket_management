@@ -12,7 +12,8 @@
   "action": {
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "remove": "Remove"
+    "remove": "Remove",
+    "close": "Close"
   },
   "customer": {
     "title": "Schedules"
@@ -37,8 +38,7 @@
     "name": "Name",
     "seats": "@:schedule.seats",
     "issued": "Issued at",
-    "expired": "Expired",
-    "notExpired": "Not expired"
+    "canceled": "Canceled"
   },
   "auth": {
     "section": "Section",

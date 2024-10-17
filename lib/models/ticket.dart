@@ -9,19 +9,22 @@ class Ticket extends Model {
     required Schedule schedule,
     required String name,
     int seats = Schedule.seatsMin,
-    DateTime? issued,
     required String code,
-    bool expired = false,
+    bool canceled = false,
   }) : super() {
     scheduleUid = schedule.uid;
     this.name = name;
     this.seats = seats;
-    this.issued = issued ?? DateTime.now();
+    issued = DateTime.now();
     this.code = code;
-    this.expired = expired;
+    this.canceled = canceled;
   }
 
-  Ticket.fromMap(super.map) : super.fromMap();
+  Ticket.fromMap(super.map) : super.fromMap() {
+    if (!map.containsKey(keyIssued)) {
+      issued = DateTime.now();
+    }
+  }
 
   static const String keySchedule = "schedule";
 
@@ -33,7 +36,7 @@ class Ticket extends Model {
 
   static const String keyCode = "code";
 
-  static const String keyExpired = "expired";
+  static const String keyCancel = "cancel";
 
   String get scheduleUid => getValue<String>(keySchedule) ?? "";
 
@@ -56,8 +59,8 @@ class Ticket extends Model {
 
   set code(String code) => setValue<String>(keyCode, code);
 
-  bool get expired => getValue<bool>(keyExpired) ?? true;
+  bool get canceled => getValue<bool>(keyCancel) ?? false;
 
-  set expired(bool value) => setValue<bool>(keyExpired, value);
+  set canceled(bool value) => setValue<bool>(keyCancel, value);
 
 }

@@ -63,8 +63,15 @@ class _TicketEditDialogState extends State<TicketEditDialog> {
     Navigator.pop(context, item);
   }
 
-  void onNegative() {
+  void onClose() {
     Navigator.pop(context);
+  }
+
+  void onCancel() {
+    if (!removable) return;
+    final item = Ticket.fromMap(widget.ticket!.map);
+    item.canceled = true;
+    Navigator.pop(context, item);
   }
 
   @override
@@ -121,16 +128,23 @@ class _TicketEditDialogState extends State<TicketEditDialog> {
         ),
       ),
       actions: [
+        if (removable)
+          TextButton(
+            onPressed: onCancel,
+            child: Text(
+              LocaleKeys.action_cancel.tr(),
+              style: const TextStyle(
+                color: Colors.red,
+              ),
+            ),
+          ),
+        TextButton(
+          onPressed: onClose,
+          child: Text(LocaleKeys.action_close.tr()),
+        ),
         TextButton(
           onPressed: onConfirm,
           child: Text(LocaleKeys.action_confirm.tr()),
-        ),
-        TextButton(
-          onPressed: onNegative,
-          child: Text(removable
-              ? LocaleKeys.action_remove.tr()
-              : LocaleKeys.action_cancel.tr()
-          ),
         ),
       ],
     );
